@@ -39,9 +39,12 @@ exports.genre_create_get = (req, res, next) => {
 // Handle Genre create on POST.
 exports.genre_create_post = [
   // Validate and sanitize the name field.
-  body("name", "Genre must contain at least 3 characters")
+  body("name")
     .trim()
     .isLength({ min: 3 })
+    .withMessage("Genre must contain at least 3 characters")
+    .isAlphanumeric()
+    .withMessage("Genre has non-alphanumeric characters")
     .escape(),
 
   // Process request after validation and sanitization.
