@@ -43,8 +43,6 @@ exports.genre_create_post = [
     .trim()
     .isLength({ min: 3 })
     .withMessage("Genre must contain at least 3 characters")
-    .isAlphanumeric()
-    .withMessage("Genre has non-alphanumeric characters")
     .escape(),
 
   // Process request after validation and sanitization.
