@@ -153,6 +153,52 @@ exports.author_update_get = asyncHandler(async (req, res, next) => {
 });
 
 // Handle Author update on POST.
-exports.author_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Author update POST");
-});
+exports.author_update_post = [
+  // Validate and sanitize
+  body("first_name", "First Name must not be empty.")
+    .trim()
+    .isLength({ min: 1 }),
+  body("family_name", "Family Name must not be empty")
+    .trim()
+    .isLength({ min: 1 }),
+  body("date_of_birth", "Invalid Date of Birth")
+    .optional({ values: "falsy" })
+    .isISO8601()
+    .toDate(),
+  body("date_of_death", "Invalide Date of Death")
+    .optional({ values: "falsy" })
+    .isISO8601()
+    .toDate(),
+
+  asyncHandler(async (req, res, next) => {
+    // Get errors from validation
+    const errors = validationResult(req);
+
+    // Create author from req
+    const author = new Author({
+      first_name: req.body.first_name,
+      family_name: req.body.family_name,
+      date_of_birth: req.body.date_of_birth,
+      date_of_death: req.body.date_of_death,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      // Render form if errors
+      res.render("author_form", {
+        title: "Update Author",
+        author: author,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Update author
+      await Author.findByIdAndUpdate(req.params.id, author);
+      res.redirect(author.url);
+    }
+  }),
+
+  asyncHandler(async (req, res, next) => {
+    res.send("NOT IMPLEMENTED: Author update POST");
+  }),
+];
