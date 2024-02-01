@@ -193,12 +193,11 @@ exports.author_update_post = [
       return;
     } else {
       // Update author
-      await Author.findByIdAndUpdate(req.params.id, author);
-      res.redirect(author.url);
+      const updatedGenre = await Author.findByIdAndUpdate(
+        req.params.id,
+        author
+      );
+      res.redirect(updatedGenre.url);
     }
-  }),
-
-  asyncHandler(async (req, res, next) => {
-    res.send("NOT IMPLEMENTED: Author update POST");
   }),
 ];
